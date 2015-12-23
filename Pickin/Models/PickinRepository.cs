@@ -9,12 +9,7 @@ namespace Pickin.Models
     {
         private PickinContext _context;
         public PickinContext Context
-        {
-            get
-            {
-                return _context;
-            }
-        }
+        { get { return _context; } }
 
         public PickinRepository()
         {
