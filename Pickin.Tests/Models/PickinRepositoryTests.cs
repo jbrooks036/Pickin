@@ -11,11 +11,52 @@ namespace Pickin.Tests.Models
     [TestClass]
     public class PickinRepositoryTests
     {
+        private Mock<PickinContext> mock_context;
+        private Mock<DbSet<PickinUser>> mock_set;
+        private PickinRepository repo;
+
+        private void ConnectMocksToDataStore(IEnumerable<PickinUser> data_store)
+        {
+            var data_source = data_store.AsQueryable<PickinUser>();
+            // Hint:  var data_source = (data_store as IEnumerable<PickinUser>).AsQueryable();
+            // Convice LINQ that the Mock DbSet is a (relational) Data store.
+            mock_set.As<IQueryable<PickinUser>>().Setup(data => data.Provider).Returns(data_source.Provider);
+            mock_set.As<IQueryable<PickinUser>>().Setup(data => data.Expression).Returns(data_source.Expression);
+            mock_set.As<IQueryable<PickinUser>>().Setup(data => data.ElementType).Returns(data_source.ElementType);
+            mock_set.As<IQueryable<PickinUser>>().Setup(data => data.GetEnumerator()).Returns(data_source.GetEnumerator());
+
+            // Stubbing the PickinUsers property getter
+            mock_context.Setup(a => a.PickinUsers).Returns(mock_set.Object);
+        }
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            mock_context = new Mock<PickinContext>();
+            mock_set = new Mock<DbSet<PickinUser>>();
+            repo = new PickinRepository(mock_context.Object);
+
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            mock_context = null;
+            mock_set = null;
+            repo = null;
+        }
+
         [TestMethod]
         public void PickinContextEnsureICanCreateInstance()
         {
-            PickinContext context = new PickinContext();
+            PickinContext context = mock_context.Object;
             Assert.IsNotNull(context); 
+        }
+
+        [TestMethod]
+        public void PickinRepositoryEnsureICanCreateInstance()
+        {
+            Assert.IsNotNull(repo);
         }
 
         [TestMethod]
@@ -27,21 +68,10 @@ namespace Pickin.Tests.Models
                 new PickinUser { FirstName = "JoAnn" },
                 new PickinUser { FirstName = "Tony" }
             };
-            Mock<PickinContext> mock_context = new Mock<PickinContext>();
-            Mock<DbSet<PickinUser>> mock_set = new Mock<DbSet<PickinUser>>();
 
             mock_set.Object.AddRange(expected);
-            var data_source = expected.AsQueryable();
 
-            // Convice LINQ that the Mock DbSet is a (relational) Data store.
-            mock_set.As<IQueryable<PickinUser>>().Setup(data => data.Provider).Returns(data_source.Provider);
-            mock_set.As<IQueryable<PickinUser>>().Setup(data => data.Expression).Returns(data_source.Expression);
-            mock_set.As<IQueryable<PickinUser>>().Setup(data => data.ElementType).Returns(data_source.ElementType);
-            mock_set.As<IQueryable<PickinUser>>().Setup(data => data.GetEnumerator()).Returns(data_source.GetEnumerator());
-
-            // Stubbing the PickinUsers property getter
-            mock_context.Setup(a => a.PickinUsers).Returns(mock_set.Object);
-            PickinRepository repo = new PickinRepository(mock_context.Object);
+            ConnectMocksToDataStore(expected);
 
             // Act
             var actual = repo.GetAllUsers();
@@ -54,7 +84,6 @@ namespace Pickin.Tests.Models
         public void PickinRepositoryEnsureIHaveAContext()
         {
             // Arrange
-            PickinRepository repo = new PickinRepository();
 
             // Act
             var actual = repo.Context;
