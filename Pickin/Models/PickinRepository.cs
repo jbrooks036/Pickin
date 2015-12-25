@@ -23,7 +23,8 @@ namespace Pickin.Models
 
         public List<PickinUser> GetAllUsers()
         {
-            return null;
+            var query = from users in _context.PickinUsers select users;
+            return query.ToList();
         }
 
         public List<Tune> GetAllTunes()

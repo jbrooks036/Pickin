@@ -9,7 +9,7 @@ namespace Pickin.Models
     public class PickinContext : DbContext
     {
         // IDbSet, IQueryable
-        public DbSet<PickinUser> PickinUsers { get; set; }
+        public virtual DbSet<PickinUser> PickinUsers { get; set; }
         public DbSet<Tune> Tunes { get; set; }
     }
 }
