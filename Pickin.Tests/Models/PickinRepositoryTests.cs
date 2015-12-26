@@ -12,28 +12,29 @@ namespace Pickin.Tests.Models
     public class PickinRepositoryTests
     {
         private Mock<PickinContext> mock_context;
-        private Mock<DbSet<PickinUser>> mock_set;
+        private Mock<DbSet<PickinUser>> mock_user_set;
+        private Mock<DbSet<PickinUser>> mock_tune_set;
         private PickinRepository repo;
 
-        private void ConnectMocksToDataStore(IEnumerable<PickinUser> data_store)
+        private void ConnectUserMocksToDataStore(IEnumerable<PickinUser> data_store)
         {
             var data_source = data_store.AsQueryable<PickinUser>();
             // Hint:  var data_source = (data_store as IEnumerable<PickinUser>).AsQueryable();
             // Convice LINQ that the Mock DbSet is a (relational) Data store.
-            mock_set.As<IQueryable<PickinUser>>().Setup(data => data.Provider).Returns(data_source.Provider);
-            mock_set.As<IQueryable<PickinUser>>().Setup(data => data.Expression).Returns(data_source.Expression);
-            mock_set.As<IQueryable<PickinUser>>().Setup(data => data.ElementType).Returns(data_source.ElementType);
-            mock_set.As<IQueryable<PickinUser>>().Setup(data => data.GetEnumerator()).Returns(data_source.GetEnumerator());
+            mock_user_set.As<IQueryable<PickinUser>>().Setup(data => data.Provider).Returns(data_source.Provider);
+            mock_user_set.As<IQueryable<PickinUser>>().Setup(data => data.Expression).Returns(data_source.Expression);
+            mock_user_set.As<IQueryable<PickinUser>>().Setup(data => data.ElementType).Returns(data_source.ElementType);
+            mock_user_set.As<IQueryable<PickinUser>>().Setup(data => data.GetEnumerator()).Returns(data_source.GetEnumerator());
 
             // Stubbing the PickinUsers property getter
-            mock_context.Setup(a => a.PickinUsers).Returns(mock_set.Object);
+            mock_context.Setup(a => a.PickinUsers).Returns(mock_user_set.Object);
         }
 
         [TestInitialize]
         public void Initialize()
         {
             mock_context = new Mock<PickinContext>();
-            mock_set = new Mock<DbSet<PickinUser>>();
+            mock_user_set = new Mock<DbSet<PickinUser>>();
             repo = new PickinRepository(mock_context.Object);
 
         }
@@ -42,7 +43,7 @@ namespace Pickin.Tests.Models
         public void Cleanup()
         {
             mock_context = null;
-            mock_set = null;
+            mock_user_set = null;
             repo = null;
         }
 
@@ -69,9 +70,9 @@ namespace Pickin.Tests.Models
                 new PickinUser { FirstName = "Tony" }
             };
 
-            mock_set.Object.AddRange(expected);
+            mock_user_set.Object.AddRange(expected);
 
-            ConnectMocksToDataStore(expected);
+            ConnectUserMocksToDataStore(expected);
 
             // Act
             var actual = repo.GetAllUsers();
