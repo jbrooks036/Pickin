@@ -13,7 +13,7 @@ namespace Pickin.Tests.Models
     {
         private Mock<PickinContext> mock_context;
         private Mock<DbSet<PickinUser>> mock_user_set;
-        private Mock<DbSet<PickinUser>> mock_tune_set;
+        private Mock<DbSet<Tune>> mock_tune_set;
         private PickinRepository repo;
 
         private void ConnectUserMocksToDataStore(IEnumerable<PickinUser> data_store)
@@ -30,11 +30,26 @@ namespace Pickin.Tests.Models
             mock_context.Setup(a => a.PickinUsers).Returns(mock_user_set.Object);
         }
 
+        private void ConnectTuneMocksToDataStore(IEnumerable<Tune> data_store)
+        {
+            var data_source = data_store.AsQueryable<Tune>();
+            // Hint:  var data_source = (data_store as IEnumerable<Tune>).AsQueryable();
+            // Convice LINQ that the Mock DbSet is a (relational) Data store.
+            mock_tune_set.As<IQueryable<Tune>>().Setup(data => data.Provider).Returns(data_source.Provider);
+            mock_tune_set.As<IQueryable<Tune>>().Setup(data => data.Expression).Returns(data_source.Expression);
+            mock_tune_set.As<IQueryable<Tune>>().Setup(data => data.ElementType).Returns(data_source.ElementType);
+            mock_tune_set.As<IQueryable<Tune>>().Setup(data => data.GetEnumerator()).Returns(data_source.GetEnumerator());
+
+            // Stubbing the PickinUsers property getter
+            mock_context.Setup(a => a.Tunes).Returns(mock_tune_set.Object);
+        }
+
         [TestInitialize]
         public void Initialize()
         {
             mock_context = new Mock<PickinContext>();
             mock_user_set = new Mock<DbSet<PickinUser>>();
+            mock_tune_set = new Mock<DbSet<Tune>>();
             repo = new PickinRepository(mock_context.Object);
 
         }
@@ -44,6 +59,7 @@ namespace Pickin.Tests.Models
         {
             mock_context = null;
             mock_user_set = null;
+            mock_tune_set = null;
             repo = null;
         }
 

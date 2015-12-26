@@ -10,6 +10,6 @@ namespace Pickin.Models
     {
         // IDbSet, IQueryable
         public virtual DbSet<PickinUser> PickinUsers { get; set; }
-        public DbSet<Tune> Tunes { get; set; }
+        public virtual DbSet<Tune> Tunes { get; set; }
     }
 }
