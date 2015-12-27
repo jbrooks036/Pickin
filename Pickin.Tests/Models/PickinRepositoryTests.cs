@@ -109,5 +109,46 @@ namespace Pickin.Tests.Models
             Assert.IsInstanceOfType(actual, typeof(PickinContext));
         }
 
+        [TestMethod]
+        public void PickinRepositoryEnsureICanCreateATune()
+        {
+            // Arrange
+            List<Tune> expected_tunes = new List<Tune>();  // proxy "database"
+            ConnectTuneMocksToDataStore(expected_tunes);
+            string title = "Cripple Creek";
+            mock_tune_set.Setup(j => j.Add(It.IsAny<Tune>())).Callback((Tune t) => expected_tunes.Add(t));
+
+            // Act
+            bool successful = repo.CreateTune(title);
+
+            // Assert
+            Assert.AreEqual(1, repo.GetAllTunes().Count);
+        }
+
+        [TestMethod]
+        public void PickinRepositoryEnsureICanGetAllTunes()
+        {
+            // Arrange
+            List<Tune> expected_tunes = new List<Tune>
+            {
+                new Tune { Title = "Foggy Mountain Breakdown" },
+                new Tune { Title = "Little Maggie" },
+                new Tune { Title = "Boil Dem Cabbage" }
+            };
+            mock_tune_set.Object.AddRange(expected_tunes);
+            ConnectTuneMocksToDataStore(expected_tunes);
+
+            // Act
+            List<Tune> actual_tunes = repo.GetAllTunes();
+            expected_tunes.Sort();
+            actual_tunes.Sort();
+
+            // Assert
+            Assert.AreEqual(expected_tunes[0].Title, actual_tunes[0].Title);
+            Assert.AreEqual(expected_tunes[1].Title, actual_tunes[1].Title);
+            Assert.AreEqual(expected_tunes[2].Title, actual_tunes[2].Title);
+            Assert.AreEqual("Boil Dem Cabbage", actual_tunes[0].Title); // just to double-check
+             
+        }
     }
 }

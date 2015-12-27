@@ -29,7 +29,27 @@ namespace Pickin.Models
 
         public List<Tune> GetAllTunes()
         {
-            return null;
+            // SQL:  select * from Tunes;
+            var query = from tune in _context.Tunes select tune;
+            List<Tune> found_tunes = query.ToList();
+            // found_tunes.Sort();
+            return found_tunes;
+        }
+
+        public bool CreateTune(string title)
+        {
+            Tune a_tune = new Tune { Title = title };
+            bool is_added = true;
+            try
+            {
+                Tune added_tune = _context.Tunes.Add(a_tune);
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                is_added = false;
+            }
+            return is_added;
         }
     }
 }
