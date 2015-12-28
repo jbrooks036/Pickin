@@ -51,6 +51,24 @@ namespace Pickin.Models
             }
             return is_added;
         }
+
+        public bool CreatePickinUser(ApplicationUser app_user)
+        {
+            // TBD:  check if already exists, first
+
+            PickinUser new_user = new PickinUser { RealUser = app_user };
+            bool is_added = true;
+            try
+            {
+                PickinUser added_user = _context.PickinUsers.Add(new_user);
+                _context.SaveChanges();
+            }
+            catch (Exception)
+            {
+                is_added = false;
+            }
+            return is_added;
+        }
     }
 }
 

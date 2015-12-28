@@ -11,6 +11,8 @@ namespace Pickin.Models
         [Key]
         public int PickinUserId { get; set; }
 
+        public virtual ApplicationUser RealUser { get; set; }
+
         [Required]
         public string FirstName { get; set; }
 

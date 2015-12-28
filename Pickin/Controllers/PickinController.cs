@@ -1,18 +1,41 @@
-﻿using System;
+﻿using Pickin.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 
 namespace Pickin.Controllers
 {
     public class PickinController : Controller
     {
-        // add Pickin display here
+        public PickinRepository Repo { get; set; }
+
+        public PickinController() : base()
+        {
+            Repo = new PickinRepository();
+        }
 
         // GET: Pickin
         public ActionResult Index()
         {
+            string user_id = User.Identity.GetUserId();
+            ApplicationUser real_user = Repo.Context.Users.FirstOrDefault(u => u.Id == user_id);
+            PickinUser me = null;
+            try
+            {
+                me = Repo.GetAllUsers().Where(u => u.RealUser.Id == user_id).Single();
+            } catch (Exception)
+            {
+                bool successful = Repo.CreatePickinUser(real_user);
+                if (successful)
+                {
+                }
+                else
+                {
+                }
+            }
             return View();
         }
 
