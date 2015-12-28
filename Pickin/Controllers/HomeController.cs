@@ -17,7 +17,13 @@ namespace Pickin.Controllers
         {
             ViewBag.Message = "Your application description page.";
 
-            return View();
+            // 1. Create or Get a list of things
+            List<string> my_list = new List<string>();
+            my_list.Add("One");
+            my_list.Add("Two");
+            my_list.Add("Three");
+
+            return View(my_list);
         }
 
         public ActionResult Contact()
