@@ -8,6 +8,8 @@ namespace Pickin.Controllers
 {
     public class PickinController : Controller
     {
+        // add Pickin display here
+
         // GET: Pickin
         public ActionResult Index()
         {
