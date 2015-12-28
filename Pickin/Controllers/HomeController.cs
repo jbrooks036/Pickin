@@ -23,6 +23,8 @@ namespace Pickin.Controllers
             my_list.Add("Two");
             my_list.Add("Three");
 
+            ViewBag.SomeData = my_list;
+
             return View(my_list);
         }
 

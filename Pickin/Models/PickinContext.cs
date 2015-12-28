@@ -6,7 +6,7 @@ using System.Data.Entity;
 
 namespace Pickin.Models
 {
-    public class PickinContext : DbContext
+    public class PickinContext : ApplicationDbContext
     {
         // IDbSet, IQueryable
         public virtual DbSet<PickinUser> PickinUsers { get; set; }
