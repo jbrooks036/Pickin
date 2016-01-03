@@ -23,6 +23,7 @@ namespace Pickin.Controllers
             string user_id = User.Identity.GetUserId();
             ApplicationUser real_user = Repo.Context.Users.FirstOrDefault(u => u.Id == user_id);
             PickinUser me = null;
+            ViewBag.Title = "Index ActionResult";
             try
             {
                 me = Repo.GetAllUsers().Where(u => u.RealUser.Id == user_id).Single();
@@ -36,6 +37,12 @@ namespace Pickin.Controllers
                 {
                 }
             }
+            return View();
+        }
+
+        // GET: Pickin/MyTunes
+        public ActionResult MyTunes()
+        {
             return View();
         }
 
