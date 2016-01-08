@@ -41,6 +41,7 @@ namespace Pickin.Controllers
         }
 
         // GET: Pickin/MyTunes
+        [Authorize]
         public ActionResult MyTunes()
         {
             return View();
