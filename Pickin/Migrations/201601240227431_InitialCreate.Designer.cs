@@ -13,7 +13,7 @@ namespace Pickin.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201512282101278_InitialCreate"; }
+            get { return "201601240227431_InitialCreate"; }
         }
         
         string IMigrationMetadata.Source

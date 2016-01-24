@@ -14,48 +14,15 @@ namespace Pickin.Migrations
                         PickinUserId = c.Int(nullable: false, identity: true),
                         FirstName = c.String(nullable: false),
                         LastName = c.String(),
+                        Email = c.String(),
                         PickinUser_PickinUserId = c.Int(),
+                        RealUser_Id = c.String(maxLength: 128),
                     })
                 .PrimaryKey(t => t.PickinUserId)
                 .ForeignKey("dbo.PickinUsers", t => t.PickinUser_PickinUserId)
-                .Index(t => t.PickinUser_PickinUserId);
-            
-            CreateTable(
-                "dbo.Tunes",
-                c => new
-                    {
-                        TuneId = c.Int(nullable: false, identity: true),
-                        Artist = c.String(),
-                        Title = c.String(nullable: false),
-                        Year = c.Int(nullable: false),
-                        PickinUser_PickinUserId = c.Int(),
-                    })
-                .PrimaryKey(t => t.TuneId)
-                .ForeignKey("dbo.PickinUsers", t => t.PickinUser_PickinUserId)
-                .Index(t => t.PickinUser_PickinUserId);
-            
-            CreateTable(
-                "dbo.AspNetRoles",
-                c => new
-                    {
-                        Id = c.String(nullable: false, maxLength: 128),
-                        Name = c.String(nullable: false, maxLength: 256),
-                    })
-                .PrimaryKey(t => t.Id)
-                .Index(t => t.Name, unique: true, name: "RoleNameIndex");
-            
-            CreateTable(
-                "dbo.AspNetUserRoles",
-                c => new
-                    {
-                        UserId = c.String(nullable: false, maxLength: 128),
-                        RoleId = c.String(nullable: false, maxLength: 128),
-                    })
-                .PrimaryKey(t => new { t.UserId, t.RoleId })
-                .ForeignKey("dbo.AspNetRoles", t => t.RoleId, cascadeDelete: true)
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
-                .Index(t => t.UserId)
-                .Index(t => t.RoleId);
+                .ForeignKey("dbo.AspNetUsers", t => t.RealUser_Id)
+                .Index(t => t.PickinUser_PickinUserId)
+                .Index(t => t.RealUser_Id);
             
             CreateTable(
                 "dbo.AspNetUsers",
@@ -102,30 +69,69 @@ namespace Pickin.Migrations
                 .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.UserId);
             
+            CreateTable(
+                "dbo.AspNetUserRoles",
+                c => new
+                    {
+                        UserId = c.String(nullable: false, maxLength: 128),
+                        RoleId = c.String(nullable: false, maxLength: 128),
+                    })
+                .PrimaryKey(t => new { t.UserId, t.RoleId })
+                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
+                .ForeignKey("dbo.AspNetRoles", t => t.RoleId, cascadeDelete: true)
+                .Index(t => t.UserId)
+                .Index(t => t.RoleId);
+            
+            CreateTable(
+                "dbo.Tunes",
+                c => new
+                    {
+                        TuneId = c.Int(nullable: false, identity: true),
+                        Artist = c.String(),
+                        Title = c.String(nullable: false),
+                        Year = c.Int(nullable: false),
+                        PickinUser_PickinUserId = c.Int(),
+                    })
+                .PrimaryKey(t => t.TuneId)
+                .ForeignKey("dbo.PickinUsers", t => t.PickinUser_PickinUserId)
+                .Index(t => t.PickinUser_PickinUserId);
+            
+            CreateTable(
+                "dbo.AspNetRoles",
+                c => new
+                    {
+                        Id = c.String(nullable: false, maxLength: 128),
+                        Name = c.String(nullable: false, maxLength: 256),
+                    })
+                .PrimaryKey(t => t.Id)
+                .Index(t => t.Name, unique: true, name: "RoleNameIndex");
+            
         }
         
         public override void Down()
         {
+            DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
+            DropForeignKey("dbo.Tunes", "PickinUser_PickinUserId", "dbo.PickinUsers");
+            DropForeignKey("dbo.PickinUsers", "RealUser_Id", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
-            DropForeignKey("dbo.Tunes", "PickinUser_PickinUserId", "dbo.PickinUsers");
             DropForeignKey("dbo.PickinUsers", "PickinUser_PickinUserId", "dbo.PickinUsers");
+            DropIndex("dbo.AspNetRoles", "RoleNameIndex");
+            DropIndex("dbo.Tunes", new[] { "PickinUser_PickinUserId" });
+            DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
+            DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
             DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.AspNetUsers", "UserNameIndex");
-            DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
-            DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
-            DropIndex("dbo.AspNetRoles", "RoleNameIndex");
-            DropIndex("dbo.Tunes", new[] { "PickinUser_PickinUserId" });
+            DropIndex("dbo.PickinUsers", new[] { "RealUser_Id" });
             DropIndex("dbo.PickinUsers", new[] { "PickinUser_PickinUserId" });
+            DropTable("dbo.AspNetRoles");
+            DropTable("dbo.Tunes");
+            DropTable("dbo.AspNetUserRoles");
             DropTable("dbo.AspNetUserLogins");
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.AspNetUsers");
-            DropTable("dbo.AspNetUserRoles");
-            DropTable("dbo.AspNetRoles");
-            DropTable("dbo.Tunes");
             DropTable("dbo.PickinUsers");
         }
     }
