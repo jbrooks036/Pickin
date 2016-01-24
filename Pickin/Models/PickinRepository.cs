@@ -56,7 +56,7 @@ namespace Pickin.Models
         {
             // TBD:  check if already exists, first
 
-            PickinUser new_user = new PickinUser { RealUser = app_user };
+            PickinUser new_user = new PickinUser { RealUser = app_user, Email = app_user.Email };
             bool is_added = true;
             try
             {

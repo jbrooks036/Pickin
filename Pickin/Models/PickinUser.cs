@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Pickin.Models
 {
-    public class PickinUser
+    public class PickinUser : IComparable
     {
         [Key]
         public int PickinUserId { get; set; }
@@ -15,12 +15,23 @@ namespace Pickin.Models
 
         [Required]
         public string FirstName { get; set; }
-
         public string LastName { get; set; }
+        public string Email { get; set; }
 
         // ICollection, IEnumerable, IQueryable
         public List<Tune> Tunes { get; set; }
         public List<PickinUser> AllPickinUsers { get; set; }
+
+        public int CompareTo(object obj)
+        {
+            // sort user based on email because email is string AND...
+            // .NET knows how to compare strings already.  ha!
+
+            // first need to explicitly cast from boject type to PickinUser type
+            PickinUser other_user = obj as PickinUser;
+            int answer = this.Email.CompareTo(other_user.Email);
+            return answer;
+        }
     }
 }
 
