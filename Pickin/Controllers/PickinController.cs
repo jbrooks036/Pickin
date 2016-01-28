@@ -20,7 +20,25 @@ namespace Pickin.Controllers
         // GET: Pickin
         public ActionResult Index()
         {
-            ViewBag.Title = "Index ActionResult";
+            string user_id = User.Identity.GetUserId();
+            ApplicationUser real_user = Repo.Context.Users.FirstOrDefault(u => u.Id == user_id);
+            PickinUser me = null;
+            try
+            {
+                me = Repo.GetAllUsers().Where(u => u.RealUser.Id == user_id).Single();
+            } catch (Exception)
+            {
+                bool successful = Repo.CreatePickinUser(real_user);
+                if (successful)
+                {
+                    ViewBag.Title = "Index ActionResult - Repo.CreatePickinUser SUCCESS!!";
+                }
+                else
+                {
+                    ViewBag.Title = "Index ActionResult - Repo.CreatePickinUser FAILED!!";
+                }
+            }
+            ViewBag.AppUser = me.RealUser.Email;
             return View();
         }
 
