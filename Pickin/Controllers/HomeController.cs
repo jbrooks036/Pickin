@@ -10,7 +10,7 @@ namespace Pickin.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index", "Pickin");
         }
 
         public ActionResult About()
