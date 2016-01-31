@@ -14,9 +14,10 @@ namespace Pickin.Models
         public virtual ApplicationUser RealUser { get; set; }
 
         [Required]
+        public string Email { get; set; }
+
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Email { get; set; }
 
         // ICollection, IEnumerable, IQueryable
         public List<Tune> Tunes { get; set; }
