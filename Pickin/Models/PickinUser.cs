@@ -13,9 +13,6 @@ namespace Pickin.Models
 
         public virtual ApplicationUser RealUser { get; set; }
 
-        [Required]
-        public string Email { get; set; }
-
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
@@ -30,7 +27,7 @@ namespace Pickin.Models
 
             // first need to explicitly cast from boject type to PickinUser type
             PickinUser other_user = obj as PickinUser;
-            int answer = this.Email.CompareTo(other_user.Email);
+            int answer = this.RealUser.Email.CompareTo(other_user.RealUser.Email);
             return answer;
         }
     }

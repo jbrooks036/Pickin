@@ -18,7 +18,7 @@ namespace Pickin
                 url: "{controller}/{action}/{id}",
                 defaults: new
                 {
-                    controller = "Home",
+                    controller = "Pickin",
                     action = "Index",
                     id = UrlParameter.Optional
                 }

@@ -21,10 +21,15 @@ namespace Pickin.Controllers
         public ActionResult Index()
         {
             string user_id = User.Identity.GetUserId();
+            if (user_id == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             ApplicationUser real_user = Repo.Context.Users.FirstOrDefault(u => u.Id == user_id);
             PickinUser me = null;
             try
             {
+                var all_users = Repo.GetAllUsers();
                 me = Repo.GetAllUsers().Where(u => u.RealUser.Id == user_id).Single();
             } catch (Exception)
             {
@@ -38,7 +43,7 @@ namespace Pickin.Controllers
                     ViewBag.Title = "Index ActionResult - Repo.CreatePickinUser FAILED!!";
                 }
             }
-            ViewBag.AppUser = me.RealUser.Email;
+            ViewBag.pickinUserEmail = me.RealUser.Email;
             return View();
         }
 

@@ -9,7 +9,12 @@ namespace Pickin.Models
     {
         private PickinContext _context;
         public PickinContext Context
-        { get { return _context; } }
+        {
+            get
+            {
+                return _context;
+            }
+        }
 
         public PickinRepository()
         {
@@ -56,7 +61,7 @@ namespace Pickin.Models
         {
             // TBD:  check if already exists, first
 
-            PickinUser new_user = new PickinUser { RealUser = app_user, Email = app_user.Email };
+            PickinUser new_user = new PickinUser { RealUser = app_user};
             bool is_added = true;
             try
             {
