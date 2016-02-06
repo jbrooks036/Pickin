@@ -30,6 +30,7 @@ namespace Pickin.Controllers
             try
             {
                 var all_users = Repo.GetAllUsers();
+                var all_users_where_notSingle = Repo.GetAllUsers().Where(u => u.RealUser.Id == user_id);
                 me = Repo.GetAllUsers().Where(u => u.RealUser.Id == user_id).Single();
             } catch (Exception)
             {
